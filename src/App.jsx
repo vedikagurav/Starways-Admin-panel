@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 // ✅ Set backend base URL once
-const BASE_URL = "https://starways-admin-panel.vercel.app";
+const BASE_URL = "https://starways-admin-panel-backend-4dd4-a8k4d9zsu.vercel.app";
 
 export default function App() {
   // Customer
@@ -53,7 +53,7 @@ export default function App() {
       });
       alert("Customer Added: " + data.name);
       setCustomerName("");
-      setCustomers([...customers, data]); // update list
+      setCustomers([...customers, data]);
     } catch (error) {
       console.error(error);
       alert("Error adding customer");
@@ -89,9 +89,7 @@ export default function App() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // ✅ Add new drawing at top
       setDrawings((prev) => [data, ...prev]);
-
       alert("Drawing uploaded successfully!");
       setFile(null);
       setDrawingNo("");
@@ -168,7 +166,6 @@ export default function App() {
               <span className="text-xl">+</span> Add
             </button>
           </div>
-          {/* Show Customer List */}
           <ul className="mt-4 text-gray-700">
             {customers.map((c) => (
               <li key={c._id} className="border-b py-1">
@@ -191,7 +188,6 @@ export default function App() {
               ))}
             </select>
 
-            {/* Auto-filled Drawing No */}
             <input
               type="text"
               placeholder="Drawing No."
@@ -215,13 +211,11 @@ export default function App() {
           </button>
         </section>
 
-        {/* 🔍 Search & Display Section */}
+        {/* Search & Display Section */}
         <section className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6">
           <h2 className="text-2xl font-semibold mb-6 text-gray-800 border-b border-gray-200 pb-2">
             Search & Display
           </h2>
-
-          {/* ✅ Search Box */}
           <div className="flex items-center mb-5">
             <input
               type="text"
@@ -238,7 +232,6 @@ export default function App() {
             </button>
           </div>
 
-          {/* ✅ Table */}
           <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
             <table className="w-full border-collapse text-sm sm:text-base">
               <thead className="bg-gray-100 text-gray-700">
@@ -249,7 +242,6 @@ export default function App() {
                   <th className="p-3 border font-medium">Uploaded Time</th>
                 </tr>
               </thead>
-
               <tbody>
                 {drawings
                   .filter((d) =>
@@ -260,10 +252,7 @@ export default function App() {
                           .includes(searchTerm.trim().toLowerCase())
                   )
                   .map((d, index) => (
-                    <tr
-                      key={d._id}
-                      className="hover:bg-gray-50 transition text-gray-800"
-                    >
+                    <tr key={d._id} className="hover:bg-gray-50 transition text-gray-800">
                       <td className="p-3 border text-center">{index + 1}</td>
                       <td className="p-3 border font-medium">{d.drawingNo}</td>
                       <td className="p-3 border">
@@ -282,17 +271,11 @@ export default function App() {
                     </tr>
                   ))}
 
-                {/* ✅ Show "No Results" */}
                 {drawings.filter((d) =>
-                  d.drawingNo
-                    .toLowerCase()
-                    .includes(searchTerm.trim().toLowerCase())
+                  d.drawingNo.toLowerCase().includes(searchTerm.trim().toLowerCase())
                 ).length === 0 && (
                   <tr>
-                    <td
-                      colSpan="4"
-                      className="p-4 text-center text-gray-500 italic"
-                    >
+                    <td colSpan="4" className="p-4 text-center text-gray-500 italic">
                       No results found
                     </td>
                   </tr>
