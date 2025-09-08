@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 // ✅ Set backend base URL once
-const BASE_URL = "https://starways-admin-panel-backend-4dd4-a8k4d9zsu.vercel.app";
+const BASE_URL = "https://starways-admin-panel.vercel.app";
 
 export default function App() {
   // Customer
