@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+// ✅ Set backend base URL once
+const BASE_URL = "https://starways-admin-panel-backend-4dd4-a8k4d9zsu.vercel.app";
+
 export default function App() {
   // Customer
   const [customerName, setCustomerName] = useState("");
@@ -21,7 +24,7 @@ export default function App() {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/api/customers");
+        const { data } = await axios.get(`${BASE_URL}/api/customers`);
         setCustomers(data);
       } catch (error) {
         console.error("Error fetching customers:", error);
@@ -33,7 +36,7 @@ export default function App() {
   // ✅ Fetch Drawings
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/drawings")
+      .get(`${BASE_URL}/api/drawings`)
       .then((res) => setDrawings(res.data)) // ✅ already sorted by backend
       .catch((err) => console.error(err));
   }, []);
@@ -45,7 +48,7 @@ export default function App() {
       return;
     }
     try {
-      const { data } = await axios.post("http://localhost:5000/api/customers", {
+      const { data } = await axios.post(`${BASE_URL}/api/customers`, {
         name: customerName,
       });
       alert("Customer Added: " + data.name);
@@ -82,13 +85,9 @@ export default function App() {
       formData.append("file", file);
       formData.append("drawingNo", drawingNo);
 
-      const { data } = await axios.post(
-        "http://localhost:5000/api/drawings",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+      const { data } = await axios.post(`${BASE_URL}/api/drawings`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       // ✅ Add new drawing at top
       setDrawings((prev) => [data, ...prev]);
@@ -216,94 +215,92 @@ export default function App() {
           </button>
         </section>
 
-        {/* Search & Display Section */}
-       {/* 🔍 Search & Display Section */}
-<section className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6">
-  <h2 className="text-2xl font-semibold mb-6 text-gray-800 border-b border-gray-200 pb-2">
-    Search & Display
-  </h2>
+        {/* 🔍 Search & Display Section */}
+        <section className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6">
+          <h2 className="text-2xl font-semibold mb-6 text-gray-800 border-b border-gray-200 pb-2">
+            Search & Display
+          </h2>
 
-  {/* ✅ Search Box */}
-  <div className="flex items-center mb-5">
-    <input
-      type="text"
-      placeholder="Search Drawing No..."
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-      className="flex-1 border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none transition"
-    />
-    <button
-      onClick={() => setSearchTerm("")}
-      className="ml-3 px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition"
-    >
-      Clear
-    </button>
-  </div>
-
-  {/* ✅ Table */}
-  <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-    <table className="w-full border-collapse text-sm sm:text-base">
-      <thead className="bg-gray-100 text-gray-700">
-        <tr>
-          <th className="p-3 border font-medium">Sr No</th>
-          <th className="p-3 border font-medium">Drawing No</th>
-          <th className="p-3 border font-medium">File</th>
-          <th className="p-3 border font-medium">Uploaded Time</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        {drawings
-          .filter((d) =>
-            searchTerm.trim() === ""
-              ? true // ✅ show all if search is empty
-              : d.drawingNo
-                  .toLowerCase()
-                  .includes(searchTerm.trim().toLowerCase()) // ✅ case-insensitive + trim
-          )
-          .map((d, index) => (
-            <tr
-              key={d._id}
-              className="hover:bg-gray-50 transition text-gray-800"
+          {/* ✅ Search Box */}
+          <div className="flex items-center mb-5">
+            <input
+              type="text"
+              placeholder="Search Drawing No..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="flex-1 border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none transition"
+            />
+            <button
+              onClick={() => setSearchTerm("")}
+              className="ml-3 px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition"
             >
-              <td className="p-3 border text-center">{index + 1}</td>
-              <td className="p-3 border font-medium">{d.drawingNo}</td>
-              <td className="p-3 border">
-                <a
-                  href={`http://localhost:5000/${d.filePath}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-teal-600 font-medium hover:underline"
-                >
-                  View File
-                </a>
-              </td>
-              <td className="p-3 border text-gray-600">
-                {new Date(d.createdAt).toLocaleString()}
-              </td>
-            </tr>
-          ))}
+              Clear
+            </button>
+          </div>
 
-        {/* ✅ Show "No Results" */}
-        {drawings.filter((d) =>
-          d.drawingNo
-            .toLowerCase()
-            .includes(searchTerm.trim().toLowerCase())
-        ).length === 0 && (
-          <tr>
-            <td
-              colSpan="4"
-              className="p-4 text-center text-gray-500 italic"
-            >
-              No results found
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
-  </div>
-</section>
+          {/* ✅ Table */}
+          <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+            <table className="w-full border-collapse text-sm sm:text-base">
+              <thead className="bg-gray-100 text-gray-700">
+                <tr>
+                  <th className="p-3 border font-medium">Sr No</th>
+                  <th className="p-3 border font-medium">Drawing No</th>
+                  <th className="p-3 border font-medium">File</th>
+                  <th className="p-3 border font-medium">Uploaded Time</th>
+                </tr>
+              </thead>
 
+              <tbody>
+                {drawings
+                  .filter((d) =>
+                    searchTerm.trim() === ""
+                      ? true
+                      : d.drawingNo
+                          .toLowerCase()
+                          .includes(searchTerm.trim().toLowerCase())
+                  )
+                  .map((d, index) => (
+                    <tr
+                      key={d._id}
+                      className="hover:bg-gray-50 transition text-gray-800"
+                    >
+                      <td className="p-3 border text-center">{index + 1}</td>
+                      <td className="p-3 border font-medium">{d.drawingNo}</td>
+                      <td className="p-3 border">
+                        <a
+                          href={`${BASE_URL}/${d.filePath}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-teal-600 font-medium hover:underline"
+                        >
+                          View File
+                        </a>
+                      </td>
+                      <td className="p-3 border text-gray-600">
+                        {new Date(d.createdAt).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+
+                {/* ✅ Show "No Results" */}
+                {drawings.filter((d) =>
+                  d.drawingNo
+                    .toLowerCase()
+                    .includes(searchTerm.trim().toLowerCase())
+                ).length === 0 && (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="p-4 text-center text-gray-500 italic"
+                    >
+                      No results found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </main>
     </div>
   );
